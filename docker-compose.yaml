@@ -1,0 +1,30 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: urlshrtbase
+    environment:
+      POSTGRES_DB: urlshrt_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: pass
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d urlshrt_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  app:
+    restart: always
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: 'jdbc:postgresql://postgres:5433/urlshrt_db'
+      JAVA_OPTS: ''
+volumes:
+  postgres_data:
