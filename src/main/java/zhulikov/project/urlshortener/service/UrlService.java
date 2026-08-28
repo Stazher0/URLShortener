@@ -18,6 +18,7 @@ public class UrlService {
     private final UrlRepo urlRepo;
 
     public Url createUrlModel(String originalUrl) {
+
         Url urlModel = new Url();
 
         urlModel.setCreatedDate(LocalDateTime.now());
@@ -31,8 +32,7 @@ public class UrlService {
         return urlRepo.save(savedUrl);
     }
 
-    public String shortUrl(UUID id){
-        long numericId = id.getMostSignificantBits() & Long.MAX_VALUE;
-        return Base62Utils.encode(numericId);
+    public String shortUrl(Long id){
+        return Base62Utils.encode(id);
     }
 }
