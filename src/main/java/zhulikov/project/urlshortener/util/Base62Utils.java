@@ -42,10 +42,3 @@ public class Base62Utils {
         return result;
     }
 }
-
-class Test{
-    static void main() {
-        System.out.println(Base62Utils.encode(1000));
-        System.out.println(Base62Utils.decode("G8"));
-    }
-}

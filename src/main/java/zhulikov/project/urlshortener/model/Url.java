@@ -22,6 +22,8 @@ public class Url {
 
     private String shortKey;
 
+    private String originalUrl;
+
     @CreatedDate
     private LocalDateTime createdDate;
 }
