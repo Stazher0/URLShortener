@@ -4,8 +4,11 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.UUID;
+
 import zhulikov.project.urlshortener.model.Url;
 import zhulikov.project.urlshortener.repository.UrlRepo;
+import zhulikov.project.urlshortener.util.Base62Utils;
 
 @Service
 @Transactional
@@ -14,13 +17,22 @@ public class UrlService {
 
     private final UrlRepo urlRepo;
 
-    public Url saveUrl(String shortKey) {
-        Url url = new Url();
-        url.setShortKey(shortKey);
-        url.setCreatedDate(LocalDateTime.now());
+    public Url createUrlModel(String originalUrl) {
+        Url urlModel = new Url();
 
-        return urlRepo.save(url);
+        urlModel.setCreatedDate(LocalDateTime.now());
+        urlModel.setOriginalUrl(originalUrl);
+
+        Url savedUrl = urlRepo.save(urlModel);
+
+        String shortKey = shortUrl(savedUrl.getId());
+        savedUrl.setShortKey(shortKey);
+
+        return urlRepo.save(savedUrl);
     }
 
-
+    public String shortUrl(UUID id){
+        long numericId = id.getMostSignificantBits() & Long.MAX_VALUE;
+        return Base62Utils.encode(numericId);
+    }
 }
