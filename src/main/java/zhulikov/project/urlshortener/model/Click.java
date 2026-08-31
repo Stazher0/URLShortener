@@ -1,32 +1,27 @@
 package zhulikov.project.urlshortener.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import java.time.LocalDateTime;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
-@EntityListeners(AuditingEntityListener.class)
-public class Url {
+public class Click {
 
     @Id
     @SequenceGenerator(name = "link_seq",
             sequenceName = "link_sequence",
             allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "link_seq")
-    private Long urlId;
+    private Long clickId;
 
-    @Column(unique = true)
-    private String shortKey;
-
-    private String originalUrl;
+    @ManyToOne
+    @JoinColumn(name = "id", nullable = false)
+    private Url url;
 
     @CreatedDate
-    private LocalDateTime createdDate;
+    private LocalDateTime clickedAt;
+
 }

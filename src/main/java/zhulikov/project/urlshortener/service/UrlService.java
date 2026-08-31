@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 import zhulikov.project.urlshortener.model.Url;
 import zhulikov.project.urlshortener.repository.UrlRepo;
@@ -26,7 +25,7 @@ public class UrlService {
 
         Url savedUrl = urlRepo.save(urlModel);
 
-        String shortKey = shortUrl(savedUrl.getId());
+        String shortKey = shortUrl(savedUrl.getUrlId());
         savedUrl.setShortKey(shortKey);
 
         return urlRepo.save(savedUrl);
