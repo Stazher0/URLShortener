@@ -16,15 +16,51 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - app-network
+
+  redis:
+    image: redis:latest
+    container_name: urlshrtredis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
   app:
     restart: always
     build: .
+    container_name: urlshrtapp
     ports:
       - "8080:8080"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: 'jdbc:postgresql://postgres:5433/urlshrt_db'
+      SPRING_DATASOURCE_URL: 'jdbc:postgresql://postgres:5432/urlshrt_db'
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: pass
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
       JAVA_OPTS: ''
+    networks:
+      - app-network
+
 volumes:
   postgres_data:
+  redis_data:
+
+networks:
+  app-network:
+    driver: bridge
