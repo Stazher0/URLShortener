@@ -1,5 +1,6 @@
 package zhulikov.project.urlshortener.controller.api;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +16,9 @@ public class UrlController {
 
     private final UrlService urlService;
 
+
     @PostMapping()
-    public ResponseEntity<Url> saveUrlModel(@RequestBody UrlRequest request){
+    public ResponseEntity<Url> saveUrlModel(@Valid @RequestBody UrlRequest request){
         Url savedUrl = urlService.createUrlModel(request.getOriginalUrl());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUrl);
