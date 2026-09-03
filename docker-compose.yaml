@@ -37,23 +37,29 @@ services:
       - app-network
 
   app:
+    user: root
     restart: always
     build: .
     container_name: urlshrtapp
     ports:
-      - "8080:8080"
+      - "8081:8081"
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
     environment:
+      SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: 'jdbc:postgresql://postgres:5432/urlshrt_db'
       SPRING_DATASOURCE_USERNAME: admin
       SPRING_DATASOURCE_PASSWORD: pass
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.PostgreSQLDialect
+      SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT: 30000
       JAVA_OPTS: ''
+    command: sh -c "sleep 5 && java $JAVA_OPTS -jar app.jar"
     networks:
       - app-network
 
